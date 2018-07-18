@@ -82,10 +82,11 @@ For secrets in the same AWS account as the agent, you can use the secret name ra
 ```yml
 steps:
   - commands: 'echo $MY_SECRET'
-    seek-oss/aws-sm#v0.0.1:
-      env:
-        - MY_SECRET='my-secret-id'
-        - MY_OTHER_SECRET='my-other-secret-id'
+    plugins:
+      seek-oss/aws-sm#v0.0.1:
+        env:
+          - MY_SECRET='my-secret-id'
+          - MY_OTHER_SECRET='my-other-secret-id'
 ```
 
 ## For Secrets in Another Account
@@ -95,10 +96,10 @@ For secrets in another AWS account, use the secret ARN.
 ```yml
 steps:
   - commands: 'echo $SECRET_FROM_OTHER_ACCOUNT'
-      - make something
-    seek-oss/aws-sm#v0.0.1:
-      env:
-        - SECRET_FROM_OTHER_ACCOUNT='arn:aws:secretsmanager:ap-southeast-2:1234567:secret:my-global-secret'
+    plugins:
+      seek-oss/aws-sm#v0.0.1:
+        env:
+          - SECRET_FROM_OTHER_ACCOUNT='arn:aws:secretsmanager:ap-southeast-2:1234567:secret:my-global-secret'
 ```
 
 # Tests
