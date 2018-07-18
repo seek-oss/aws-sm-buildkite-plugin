@@ -5,5 +5,5 @@ requirements: []
 configuration:
   properties:
     env:
-      type: array
+      type: object
   required: []

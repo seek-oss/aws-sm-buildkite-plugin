@@ -6,7 +6,7 @@ services:
       - ".:/plugin:ro"
   lint:
     image: buildkite/plugin-linter
-    command: ['--name', 'seek-oss/github-merged-pr']
+    command: ['--name', 'seek-oss/aws-sm']
     volumes:
       - ".:/plugin:ro"
 

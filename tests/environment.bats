@@ -9,8 +9,8 @@ docker() {
 }
 
 @test "Fetches values from AWS SM" {
-  export BUILDKITE_PLUGIN_AWS_SM_ENV_0='TARGET1=SECRET_ID1'
-  export BUILDKITE_PLUGIN_AWS_SM_ENV_1="TARGET2='SECRET_ID2'"
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1='SECRET_ID1'
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET2="'SECRET_ID2'"
 
   export -f docker
 
@@ -21,6 +21,6 @@ docker() {
   assert_output --partial "ran docker pull"
   assert_success
 
-  unset BUILDKITE_PLUGIN_AWS_SM_ENV_0
-  unset BUILDKITE_PLUGIN_AWS_SM_ENV_1
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET2
 }

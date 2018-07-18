@@ -85,8 +85,8 @@ steps:
     plugins:
       seek-oss/aws-sm#v0.0.1:
         env:
-          - MY_SECRET='my-secret-id'
-          - MY_OTHER_SECRET='my-other-secret-id'
+          MY_SECRET: my-secret-id
+          MY_OTHER_SECRET: my-other-secret-id
 ```
 
 ## For Secrets in Another Account
@@ -99,7 +99,7 @@ steps:
     plugins:
       seek-oss/aws-sm#v0.0.1:
         env:
-          - SECRET_FROM_OTHER_ACCOUNT='arn:aws:secretsmanager:ap-southeast-2:1234567:secret:my-global-secret'
+          SECRET_FROM_OTHER_ACCOUNT: 'arn:aws:secretsmanager:ap-southeast-2:1234567:secret:my-global-secret'
 ```
 
 # Tests
