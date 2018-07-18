@@ -9,7 +9,7 @@ Unlike [AWS Systems Manager (AWS SSM) Parameter Store](https://aws.amazon.com/sy
 
 # Setup
 
-See [./AWSSETUP.md](AWS Setup) for instructions on setting up the provider AWS account, and the build agent permissions.
+See [AWS Setup](./AWSSETUP.md) for instructions on setting up the provider AWS account, and the build agent permissions.
 
 
 # Example
