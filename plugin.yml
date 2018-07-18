@@ -1,0 +1,9 @@
+name: aws-sm
+description: Read secrets from AWS Secrets Manager
+author: https://github.com/seek-oss
+requirements: []
+configuration:
+  properties:
+    env:
+      type: array
+  required: []
