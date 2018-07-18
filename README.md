@@ -26,6 +26,11 @@ steps:
         env:
           MY_SECRET: my-secret-id
           MY_OTHER_SECRET: my-other-secret-id
+        file:
+          - path: 'save-my-secret-here'
+            secret-id: 'my-secret-file-id'
+          - path: 'save-my-other-secret-here'
+            secret-id: 'my-other-secret-file-id'
 ```
 
 ## For Secrets in Another Account
@@ -39,6 +44,9 @@ steps:
       seek-oss/aws-sm#v0.0.2:
         env:
           SECRET_FROM_OTHER_ACCOUNT: 'arn:aws:secretsmanager:ap-southeast-2:1234567:secret:my-global-secret'
+        file:
+          - path: 'save-my-other-secret-here'
+            secret-id: 'arn:aws:secretsmanager:ap-southeast-2:1234567:secret:my-global-file-secret'
 ```
 
 # Tests
