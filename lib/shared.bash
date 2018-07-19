@@ -9,6 +9,7 @@ docker pull infrastructureascode/aws-cli
 
 function get_secret_value() {
   local secretId="$1"
+  local allowBinary="${2-}"
 
   # Extract the secret string and secret binary
   read secrets < <(docker run \
@@ -30,8 +31,13 @@ function get_secret_value() {
   # if the secret binary field has a value, assume it's a binary
   local secretBinary=$(echo "${secrets}" | jq -r '.SecretBinary | select(. != null)')
   if [[ -n "${secretBinary}" ]]; then
-    echo "${secretBinary}" | base64 -d
-    return
+    # don't read binary in cases where it's not allowed
+    if [[ "${allowBinary}" == "allow-binary" ]]; then
+      echo "${secretBinary}" | base64 -d
+      return
+    fi
+    echo "--- :x: Binary encoded secret cannot be used in this way (e.g. env var)" >&2
+    exit 1
   fi
 
   # assume it's a string

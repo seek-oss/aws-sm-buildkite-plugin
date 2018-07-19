@@ -46,6 +46,21 @@ function docker() {
   unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET2
 }
 
+@test "Fails if attempting to read binary secret into env var" {
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1="${SECRET_ID4}"
+
+  export -f docker
+
+  run "${environment_hook}"
+
+  assert_failure
+  assert_output --partial "Reading ${SECRET_ID4} from AWS SM into environment variable TARGET1"
+  assert_output --partial "Binary encoded secret cannot be used in this way"
+  assert_output --partial "ran docker pull"
+
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1
+}
+
 @test "Fetches values from AWS SM into file" {
   local test_out_dir="/tmp/aws-sm"
   mkdir -p "${test_out_dir}"
