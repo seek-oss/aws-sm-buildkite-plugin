@@ -11,6 +11,19 @@ Unlike [AWS Systems Manager (AWS SSM) Parameter Store](https://aws.amazon.com/sy
 
 See [AWS Setup](./AWSSETUP.md) for instructions on setting up the provider AWS account, and the build agent permissions.
 
+# Supported Secrets
+
+This plugin supports both `SecretString` and `SecretBinary` [AWS SM secret types](https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html).
+
+## SecretString
+
+A AWS SM secret string may be plaintext or key/value. If you create a key/value secret, then the JSON will be returned. This plugin does not yet support expanding the plugin for you, but `jq` can be used to pull JSON values out.
+
+`SecretString`s can be exposed in an environment variable (`env`) or saved to a file.
+
+## SecretBinary
+
+Binary secrets can be saved to a file. They cannot be used with `env` (as they contain binary data).
 
 # Example
 
