@@ -4,25 +4,28 @@ load "$BATS_PATH/load.bash"
 
 environment_hook="$PWD/hooks/environment"
 
-docker() {
-  echo "ran docker $1"
-}
-
-jq() {
-  echo "ran jq"
-}
-
-base64() {
-  echo "ran base64"
+function stub_secret_plan() {
+  local secretId="${1}"
+  local secretJson="${2}"
+  echo "run --rm -v ~/.aws:/root/.aws -e 'AWS_ACCESS_KEY_ID' -e 'AWS_SECRET_ACCESS_KEY' -e 'AWS_DEFAULT_REGION' -e 'AWS_REGION' -e 'AWS_SECURITY_TOKEN' -e 'AWS_SESSION_TOKEN' infrastructureascode/aws-cli aws secretsmanager get-secret-value --secret-id ${secretId} --version-stage AWSCURRENT --output json --query '{SecretString: SecretString, SecretBinary: SecretBinary}' : echo ${secretJson}"
 }
 
 @test "Fetches values from AWS SM into env" {
   export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1='SECRET_ID1'
   export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET2="'SECRET_ID2'"
 
-  export -f docker
-  export -f jq
-  export -f base64
+  local secretValue1='{SecretString:"secret"}'
+  local secretValue2='{SecretString:"secret"}'
+
+  # the stub plan has to be declared at the same time (e.g. can't stub docker multiple times)
+  stub docker \
+    "pull infrastructureascode/aws-cli : echo ran docker pull" \
+    stub_secret_plan 'SECRET_ID1' "${secretValue1}" \
+    stub_secret_plan 'SECRET_ID2' "${secretValue2}"
+
+  stub jq \
+    "-r '.SecretBinary | select(. != null)' : echo ''" \
+    "-r '.SecretString' : echo 'secret'"
 
   run "${environment_hook}"
 
@@ -45,9 +48,21 @@ base64() {
   export BUILDKITE_PLUGIN_AWS_SM_FILE_1_PATH="'${test_out_dir}/path2'"
   export BUILDKITE_PLUGIN_AWS_SM_FILE_1_SECRET_ID="'SECRET_ID2'"
 
-  export -f docker
-  export -f jq
-  export -f base64
+  local secretValue1='{SecretBinary:"secretbase64"}'
+  local secretValue2='{SecretString:"secret"}'
+
+  # the stub plan has to be declared at the same time (e.g. can't stub docker multiple times)
+  stub docker \
+    "pull infrastructureascode/aws-cli : echo ran docker pull" \
+    stub_secret_plan 'SECRET_ID1' "${secretValue1}" \
+    stub_secret_plan 'SECRET_ID2' "${secretValue2}"
+
+  stub jq \
+    "-r '.SecretBinary | select(. != null)' : echo ''" \
+    "-r '.SecretString' : echo 'secret'"
+
+  stub base64 \
+    "--decode : echo 'final secret'"
 
   run "${environment_hook}"
 

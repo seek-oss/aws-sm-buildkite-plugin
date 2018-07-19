@@ -11,7 +11,7 @@ function get_secret_value() {
   local secretId="$1"
 
   # Extract the secret string and secret binary
-  local secrets=$(docker run \
+  read secrets < <(docker run \
     --rm \
     -v ~/.aws:/root/.aws \
     -e 'AWS_ACCESS_KEY_ID' \
@@ -28,7 +28,7 @@ function get_secret_value() {
       --query '{SecretString: SecretString, SecretBinary: SecretBinary}')
 
   # if the secret binary field has a value, assume it's a binary
-  local secretBinary=$(echo "${secrets}" | jq -r '.SecretBinary | select(. != null)')
+  read secretBinary < <(echo "${secrets}" | jq -r '.SecretBinary | select(. != null)')
   if [[ -n "${secretBinary}" ]]; then
     echo "${secretBinary}" | base64 --decode
     return
