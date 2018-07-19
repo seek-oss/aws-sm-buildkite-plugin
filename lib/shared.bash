@@ -30,7 +30,7 @@ function get_secret_value() {
   # if the secret binary field has a value, assume it's a binary
   local secretBinary=$(echo "${secrets}" | jq -r '.SecretBinary | select(. != null)')
   if [[ -n "${secretBinary}" ]]; then
-    echo "${secretBinary}"
+    echo "${secretBinary}" | base64 -d
     return
   fi
 
