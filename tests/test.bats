@@ -3,6 +3,7 @@
 load "$BATS_PATH/load.bash"
 
 environment_hook="$PWD/hooks/environment"
+post_checkout_hook="$PWD/hooks/post-checkout"
 
 export SECRET_ID1='secret1'
 export SECRET_VALUE1='{"SecretString":"pretty-secret","SecretBinary":null}'
@@ -73,7 +74,7 @@ function docker() {
 
   export -f docker
 
-  run "${environment_hook}"
+  run "${post_checkout_hook}"
 
   assert_output --partial "Reading ${SECRET_ID1} from AWS SM into file ${path1}"
   assert_output --partial "Reading ${SECRET_ID3} from AWS SM into file ${path2}"
