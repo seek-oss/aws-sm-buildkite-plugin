@@ -1,7 +1,8 @@
 version: '2'
 services:
   tests:
-    image: buildkite/plugin-tester
+    build:
+      context: .
     volumes:
       - ".:/plugin:ro"
   lint:

@@ -1,9 +1,13 @@
 name: aws-sm
 description: Read secrets from AWS Secrets Manager
 author: https://github.com/seek-oss
-requirements: []
+requirements:
+  - docker
+  - jq
 configuration:
   properties:
     env:
       type: object
+    file:
+      type: array
   required: []
