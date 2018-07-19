@@ -12,7 +12,7 @@ function get_secret_value() {
   local allowBinary="${2-}"
 
   # Extract the secret string and secret binary
-  read secrets < <(docker run \
+  local secrets=$(docker run \
     --rm \
     -v ~/.aws:/root/.aws \
     -e 'AWS_ACCESS_KEY_ID' \
