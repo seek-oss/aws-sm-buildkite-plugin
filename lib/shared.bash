@@ -28,9 +28,9 @@ function get_secret_value() {
       --query '{SecretString: SecretString, SecretBinary: SecretBinary}')
 
   # if the secret binary field has a value, assume it's a binary
-  read secretBinary < <(echo "${secrets}" | jq -r '.SecretBinary | select(. != null)')
+  local secretBinary=$(echo "${secrets}" | jq -r '.SecretBinary | select(. != null)')
   if [[ -n "${secretBinary}" ]]; then
-    echo "${secretBinary}" | base64 --decode
+    echo "${secretBinary}"
     return
   fi
 
