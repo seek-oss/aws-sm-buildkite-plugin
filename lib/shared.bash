@@ -14,6 +14,7 @@ function get_secret_value() {
   # Extract the secret string and secret binary
   # the secret is declared local before using it, per http://mywiki.wooledge.org/BashPitfalls#local_varname.3D.24.28command.29
   local secrets;
+  echo -e "\033[31m" >&2
   secrets=$(docker run \
     --rm \
     -v ~/.aws:/root/.aws \
@@ -30,8 +31,9 @@ function get_secret_value() {
       --output json \
       --query '{SecretString: SecretString, SecretBinary: SecretBinary}')
 
-  if [[ $? -ne 0 ]]; then
-    echo "Failed to read secret from AWS SM" >&2
+  local result=$?
+  echo -e "\033[0m" >&2
+  if [[ $result -ne 0 ]]; then
     exit 1
   fi
 
@@ -43,7 +45,7 @@ function get_secret_value() {
       echo "${secretBinary}" | base64 -d
       return
     fi
-    echo "Binary encoded secret cannot be used in this way (e.g. env var)" >&2
+    echo -e "\033[31mBinary encoded secret cannot be used in this way (e.g. env var)\033[0m" >&2
     exit 1
   fi
 
