@@ -35,7 +35,7 @@ For secrets in the same AWS account as the agent, you can use the secret name ra
 steps:
   - commands: 'echo \$MY_SECRET'
     plugins:
-      seek-oss/aws-sm#v0.0.3:
+      seek-oss/aws-sm#v0.0.4:
         env:
           MY_SECRET: my-secret-id
           MY_OTHER_SECRET: my-other-secret-id
@@ -54,7 +54,7 @@ For secrets in another AWS account, use the secret ARN.
 steps:
   - commands: 'echo \$SECRET_FROM_OTHER_ACCOUNT'
     plugins:
-      seek-oss/aws-sm#v0.0.3:
+      seek-oss/aws-sm#v0.0.4:
         env:
           SECRET_FROM_OTHER_ACCOUNT: 'arn:aws:secretsmanager:ap-southeast-2:1234567:secret:my-global-secret'
         file:
