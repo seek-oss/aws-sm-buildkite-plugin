@@ -12,7 +12,10 @@ function get_secret_value() {
   local allowBinary="${2-}"
 
   # Extract the secret string and secret binary
-  local secrets=$(docker run \
+  # the secret is declared local before using it, per http://mywiki.wooledge.org/BashPitfalls#local_varname.3D.24.28command.29
+  local secrets;
+  echo -e "\033[31m" >&2
+  secrets=$(docker run \
     --rm \
     -v ~/.aws:/root/.aws \
     -e 'AWS_ACCESS_KEY_ID' \
@@ -28,6 +31,12 @@ function get_secret_value() {
       --output json \
       --query '{SecretString: SecretString, SecretBinary: SecretBinary}')
 
+  local result=$?
+  echo -e "\033[0m" >&2
+  if [[ $result -ne 0 ]]; then
+    exit 1
+  fi
+
   # if the secret binary field has a value, assume it's a binary
   local secretBinary=$(echo "${secrets}" | jq -r '.SecretBinary | select(. != null)')
   if [[ -n "${secretBinary}" ]]; then
@@ -36,7 +45,7 @@ function get_secret_value() {
       echo "${secretBinary}" | base64 -d
       return
     fi
-    echo "--- :x: Binary encoded secret cannot be used in this way (e.g. env var)" >&2
+    echo -e "\033[31mBinary encoded secret cannot be used in this way (e.g. env var)\033[0m" >&2
     exit 1
   fi
 
