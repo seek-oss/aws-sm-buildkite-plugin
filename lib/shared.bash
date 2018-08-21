@@ -36,7 +36,7 @@ function get_secret_value() {
       echo "${secretBinary}" | base64 -d
       return
     fi
-    echo "--- :x: Binary encoded secret cannot be used in this way (e.g. env var)" >&2
+    echo "Binary encoded secret cannot be used in this way (e.g. env var)" >&2
     exit 1
   fi
 
