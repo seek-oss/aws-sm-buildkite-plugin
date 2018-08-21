@@ -12,7 +12,9 @@ function get_secret_value() {
   local allowBinary="${2-}"
 
   # Extract the secret string and secret binary
-  local secrets=$(docker run \
+  # the secret is declared local before using it, per http://mywiki.wooledge.org/BashPitfalls#local_varname.3D.24.28command.29
+  local secrets;
+  secrets=$(docker run \
     --rm \
     -v ~/.aws:/root/.aws \
     -e 'AWS_ACCESS_KEY_ID' \
@@ -27,6 +29,11 @@ function get_secret_value() {
       --version-stage AWSCURRENT \
       --output json \
       --query '{SecretString: SecretString, SecretBinary: SecretBinary}')
+
+  if [[ $? -ne 0 ]]; then
+    echo "Failed to read secret from AWS SM" >&2
+    exit 1
+  fi
 
   # if the secret binary field has a value, assume it's a binary
   local secretBinary=$(echo "${secrets}" | jq -r '.SecretBinary | select(. != null)')
