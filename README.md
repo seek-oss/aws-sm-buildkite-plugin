@@ -9,6 +9,8 @@ Unlike [AWS Systems Manager (AWS SSM) Parameter Store](https://aws.amazon.com/sy
 
 # Setup
 
+This plugins requires AWS CLI version 1.15 or above, as AWS Secrets Manager support is relatively new.
+
 See [AWS Setup](./AWSSETUP.md) for instructions on setting up the provider AWS account, and the build agent permissions.
 
 # Supported Secrets
