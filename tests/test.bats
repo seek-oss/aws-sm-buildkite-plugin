@@ -18,12 +18,7 @@ export SECRET_VALUE4='{"SecretString":null,"SecretBinary":"d29ybGQ="}'
 
 # this is used instead of bats mock, as many of the arguments aren't important
 # to assert...
-function docker() {
-  if [[ "$1" != "run" ]]; then
-    echo "ran docker $1"
-    return
-  fi
-
+function aws() {
   # echo the secret value based on its id
   read secretNo < <(echo "$@" | grep -o 'secret[0-9]' | grep -o '[0-9]')
   local secretVar="SECRET_VALUE${secretNo}"
@@ -34,14 +29,13 @@ function docker() {
   export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1="${SECRET_ID1}"
   export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET2="'${SECRET_ID2}'"
 
-  export -f docker
+  export -f aws
 
   run "${environment_hook}"
 
   assert_success
   assert_output --partial "Reading ${SECRET_ID1} from AWS SM into environment variable TARGET1"
   assert_output --partial "Reading ${SECRET_ID2} from AWS SM into environment variable TARGET2"
-  assert_output --partial "ran docker pull"
 
   unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1
   unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET2
@@ -50,14 +44,13 @@ function docker() {
 @test "Fails if attempting to read binary secret into env var" {
   export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1="${SECRET_ID4}"
 
-  export -f docker
+  export -f aws
 
   run "${environment_hook}"
 
   assert_failure
   assert_output --partial "Reading ${SECRET_ID4} from AWS SM into environment variable TARGET1"
   assert_output --partial "Binary encoded secret cannot be used in this way"
-  assert_output --partial "ran docker pull"
 
   unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1
 }
@@ -72,13 +65,12 @@ function docker() {
   export BUILDKITE_PLUGIN_AWS_SM_FILE_1_PATH="'${path2}'"
   export BUILDKITE_PLUGIN_AWS_SM_FILE_1_SECRET_ID="'${SECRET_ID3}'"
 
-  export -f docker
+  export -f aws
 
   run "${post_checkout_hook}"
 
   assert_output --partial "Reading ${SECRET_ID1} from AWS SM into file ${path1}"
   assert_output --partial "Reading ${SECRET_ID3} from AWS SM into file ${path2}"
-  assert_output --partial "ran docker pull"
   assert_success
 
   local actualPath1=$(cat "${path1}")
