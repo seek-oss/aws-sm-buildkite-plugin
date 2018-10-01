@@ -70,7 +70,7 @@ Per the examples above, the preferred `plugin` YAML syntax is to the use an arra
 
 ```yml
 steps:
-  - command: npm plublish
+  - command: npm publish
     plugins:
       - seek-oss/aws-sm#v0.0.5:
           env:
