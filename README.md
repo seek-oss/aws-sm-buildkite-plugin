@@ -37,15 +37,15 @@ For secrets in the same AWS account as the agent, you can use the secret name ra
 steps:
   - commands: 'echo \$MY_SECRET'
     plugins:
-      seek-oss/aws-sm#v0.0.5:
-        env:
-          MY_SECRET: my-secret-id
-          MY_OTHER_SECRET: my-other-secret-id
-        file:
-          - path: 'save-my-secret-here'
-            secret-id: 'my-secret-file-id'
-          - path: 'save-my-other-secret-here'
-            secret-id: 'my-other-secret-file-id'
+      - seek-oss/aws-sm#v0.0.5:
+          env:
+            MY_SECRET: my-secret-id
+            MY_OTHER_SECRET: my-other-secret-id
+          file:
+            - path: 'save-my-secret-here'
+              secret-id: 'my-secret-file-id'
+            - path: 'save-my-other-secret-here'
+              secret-id: 'my-other-secret-file-id'
 ```
 
 ## For Secrets in Another Account
@@ -56,12 +56,27 @@ For secrets in another AWS account, use the secret ARN.
 steps:
   - commands: 'echo \$SECRET_FROM_OTHER_ACCOUNT'
     plugins:
-      seek-oss/aws-sm#v0.0.5:
-        env:
-          SECRET_FROM_OTHER_ACCOUNT: 'arn:aws:secretsmanager:ap-southeast-2:1234567:secret:my-global-secret'
-        file:
-          - path: 'save-my-other-secret-here'
-            secret-id: 'arn:aws:secretsmanager:ap-southeast-2:1234567:secret:my-global-file-secret'
+      - seek-oss/aws-sm#v0.0.5:
+          env:
+            SECRET_FROM_OTHER_ACCOUNT: 'arn:aws:secretsmanager:ap-southeast-2:1234567:secret:my-global-secret'
+          file:
+            - path: 'save-my-other-secret-here'
+              secret-id: 'arn:aws:secretsmanager:ap-southeast-2:1234567:secret:my-global-file-secret'
+```
+
+## Using Secrets in Another Plugin
+
+Per the examples above, the preferred `plugin` YAML syntax is to the use an array of plugins over the object-key syntax, as this ensures consistent ordering between plugins. It's thus possible to use secrets from this plugin in another plugin:
+
+```yml
+steps:
+  - command: npm plublish
+    plugins:
+      - seek-oss/aws-sm#v0.0.5:
+          env:
+            MY_TOKEN: npm-publish-token
+      - seek-oss/private-npm#v1.1.1:
+          env: MY_TOKEN
 ```
 
 # Tests
