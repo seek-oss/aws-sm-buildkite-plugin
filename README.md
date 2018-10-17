@@ -83,6 +83,23 @@ steps:
           env: MY_TOKEN
 ```
 
+### Docker or Docker Compose
+
+Note that if you're using the [Docker plugin](https://github.com/buildkite-plugins/docker-buildkite-plugin) or [Docker Compose plugin](https://github.com/buildkite-plugins/docker-compose-buildkite-plugin) then the environment variable can be propagated to the container:
+
+```yml
+steps:
+  - command: echo $$MY_SECRET
+    plugins:
+      - docker#v1.4.0:
+          image: "node:8"
+          environment:
+            - MY_SECRET # propagates the env var to the container (docker run -e MY_SECRET)
+      - seek-oss/aws-sm#v0.0.5:
+          env:
+            MY_SECRET: the-secret-id
+```
+
 # Tests
 
 To run the tests of this plugin, run
