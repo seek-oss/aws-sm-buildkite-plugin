@@ -29,6 +29,10 @@ Binary secrets can be saved to a file. They cannot be used with `env` (as they c
 
 # Example
 
+Ensure to escape the variable expression when using it in your steps, e.g. `$$MY_SECRET` or `\$MY_SECRET`. This is due to [how buildkite interpolates variables on pipeline upload](https://buildkite.com/docs/agent/v3/cli-pipeline#environment-variable-substitution):
+
+> If you want an environment variable to be evaluated at run-time (for example, using the step’s environment variables) make sure to escape the $ character using $$ or \$. For example:
+
 ## For Secrets in the Same Account
 
 For secrets in the same AWS account as the agent, you can use the secret name rather than the whole ARN.
