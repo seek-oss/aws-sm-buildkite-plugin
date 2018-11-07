@@ -7,6 +7,12 @@ function strip_quotes() {
 function get_secret_value() {
   local secretId="$1"
   local allowBinary="${2-}"
+  local region="${3-}"
+  local regionFlag=""
+
+  if [[ -z "${region}" ]] ; then
+    regionFlag="--region ${region}"
+  fi
 
   # Extract the secret string and secret binary
   # the secret is declared local before using it, per http://mywiki.wooledge.org/BashPitfalls#local_varname.3D.24.28command.29
@@ -15,6 +21,7 @@ function get_secret_value() {
   secrets=$(aws secretsmanager get-secret-value \
       --secret-id "${secretId}" \
       --version-stage AWSCURRENT \
+      $regionFlag \
       --output json \
       --query '{SecretString: SecretString, SecretBinary: SecretBinary}')
 

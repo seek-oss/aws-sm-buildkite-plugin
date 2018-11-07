@@ -34,11 +34,53 @@ function aws() {
   run "${environment_hook}"
 
   assert_success
-  assert_output --partial "Reading ${SECRET_ID1} from AWS SM into environment variable TARGET1"
-  assert_output --partial "Reading ${SECRET_ID2} from AWS SM into environment variable TARGET2"
+  assert_output --partial "Reading ${SECRET_ID1} from AWS SM (default region) into environment variable TARGET1"
+  assert_output --partial "Reading ${SECRET_ID2} from AWS SM (default region) into environment variable TARGET2"
 
   unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1
   unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET2
+}
+
+@test "Fetches values from AWS SM into env with long syntax" {
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_0_SECRET_ID="${SECRET_ID1}"
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_0_ENV_NAME="TARGET1"
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_1_SECRET_ID="'${SECRET_ID2}'"
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_1_ENV_NAME="TARGET2"
+
+  export -f aws
+
+  run "${environment_hook}"
+
+  assert_success
+  assert_output --partial "Reading ${SECRET_ID1} from AWS SM (default region) into environment variable TARGET1"
+  assert_output --partial "Reading ${SECRET_ID2} from AWS SM (default region) into environment variable TARGET2"
+
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_0_SECRET_ID
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_0_ENV_NAME
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_1_SECRET_ID
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_1_ENV_NAME
+}
+
+@test "Fetches values from AWS SM into env with long syntax from another region" {
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_0_SECRET_ID="${SECRET_ID1}"
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_0_ENV_NAME="TARGET1"
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_1_SECRET_ID="'${SECRET_ID2}'"
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_1_ENV_NAME="TARGET2"
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_1_REGION="ap-southeast-2"
+
+  export -f aws
+
+  run "${environment_hook}"
+
+  assert_success
+  assert_output --partial "Reading ${SECRET_ID1} from AWS SM (default region) into environment variable TARGET1"
+  assert_output --partial "Reading ${SECRET_ID2} from AWS SM (ap-southeast-2) into environment variable TARGET2"
+
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_0_SECRET_ID
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_0_ENV_NAME
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_1_SECRET_ID
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_1_ENV_NAME
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_1_REGION
 }
 
 @test "Fails if attempting to read binary secret into env var" {
@@ -49,7 +91,7 @@ function aws() {
   run "${environment_hook}"
 
   assert_failure
-  assert_output --partial "Reading ${SECRET_ID4} from AWS SM into environment variable TARGET1"
+  assert_output --partial "Reading ${SECRET_ID4} from AWS SM (default region) into environment variable TARGET1"
   assert_output --partial "Binary encoded secret cannot be used in this way"
 
   unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1
@@ -69,8 +111,8 @@ function aws() {
 
   run "${post_checkout_hook}"
 
-  assert_output --partial "Reading ${SECRET_ID1} from AWS SM into file ${path1}"
-  assert_output --partial "Reading ${SECRET_ID3} from AWS SM into file ${path2}"
+  assert_output --partial "Reading ${SECRET_ID1} from AWS SM (default region) into file ${path1}"
+  assert_output --partial "Reading ${SECRET_ID3} from AWS SM (default region) into file ${path2}"
   assert_success
 
   local actualPath1=$(cat "${path1}")
@@ -83,4 +125,28 @@ function aws() {
   unset BUILDKITE_PLUGIN_AWS_SM_FILE_0_SECRET_ID
   unset BUILDKITE_PLUGIN_AWS_SM_FILE_1_PATH
   unset BUILDKITE_PLUGIN_AWS_SM_FILE_1_SECRET_ID
+}
+
+@test "Fetches values from AWS SM into file with region" {
+  local test_out_dir="/tmp/aws-sm"
+  mkdir -p "${test_out_dir}"
+  local path1="${test_out_dir}/path1"
+  export BUILDKITE_PLUGIN_AWS_SM_FILE_0_PATH="${path1}"
+  export BUILDKITE_PLUGIN_AWS_SM_FILE_0_SECRET_ID="${SECRET_ID1}"
+  export BUILDKITE_PLUGIN_AWS_SM_FILE_0_REGION="ap-southeast-3"
+
+  export -f aws
+
+  run "${post_checkout_hook}"
+
+  assert_output --partial "Reading ${SECRET_ID1} from AWS SM (ap-southeast-3) into file ${path1}"
+  assert_success
+
+  local actualPath1=$(cat "${path1}")
+
+  [[ "${actualPath1}" != "pretty-secret" ]] && fail "Expected contents to be saved to file"
+
+  unset BUILDKITE_PLUGIN_AWS_SM_FILE_0_PATH
+  unset BUILDKITE_PLUGIN_AWS_SM_FILE_0_SECRET_ID
+  unset BUILDKITE_PLUGIN_AWS_SM_FILE_0_REGION
 }
