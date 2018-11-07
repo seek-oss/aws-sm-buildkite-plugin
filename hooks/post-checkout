@@ -14,9 +14,7 @@ while IFS='=' read -r name _ ; do
     secretId=$(strip_quotes "${!name}")
     pathVar="${itemVar}_PATH"
     path=$(strip_quotes "${!pathVar}")
-    regionVar="${itemVar}_REGION"
-    region=$(strip_quotes "${!regionVar:-}")
-    echo "Reading ${secretId} from AWS SM (${region:-default region}) into file ${path}"
-    get_secret_value "${secretId}" 'allow-binary' "${region}" > "${path}"
+    echo "Reading ${secretId} from AWS SM into file ${path}"
+    get_secret_value "${secretId}" 'allow-binary' > "${path}"
   fi
 done < <(env | sort)

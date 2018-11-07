@@ -70,25 +70,8 @@ steps:
 
 ## For Secrets in Another Region
 
-In order to request a secret from another region from your agents, a region parameter must be provided.
-This is independent of the secret ARN, which may confusingly include a region.
-
-```yml
-steps:
-  - commands: 'echo \$MY_LOCAL_SECRET and \$MY_GLOBAL_SECRET'
-    plugins:
-      - seek-oss/aws-sm#v0.0.5:
-          env:
-            - secret-id: 'arn:aws:secretsmanager:us-west-2:1234567:secret:my-global-secret'
-              env-name: MY_GLOBAL_SECRET
-              region: us-west-2
-            - secret-id: 'arn:aws:secretsmanager:ap-southeast-2:1234567:secret:my-global-secret'
-              env-name: MY_LOCAL_SECRET
-          file:
-            - path: 'save-my-other-secret-here'
-              secret-id: 'arn:aws:secretsmanager:us-west-2:1234567:secret:my-global-file-secret'
-              region: us-west-2
-```
+This plugin supports reading AWS SM secrets from a region that is different from where your agents are running. In this case, use the ARN syntax
+rather than a secret name. The region will be deduced from the secret ARN.
 
 ## Using Secrets in Another Plugin
 

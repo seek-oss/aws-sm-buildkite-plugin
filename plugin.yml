@@ -7,7 +7,7 @@ requirements:
 configuration:
   properties:
     env:
-      type: [object, array]
+      type: object
     file:
       type: array
   required: []

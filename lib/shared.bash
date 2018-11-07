@@ -6,12 +6,13 @@ function strip_quotes() {
 
 function get_secret_value() {
   local secretId="$1"
-  local allowBinary="${2-}"
-  local region="${3-}"
+  local allowBinary="${2:-}"
   local regionFlag=""
 
-  if [[ -z "${region}" ]] ; then
-    regionFlag="--region ${region}"
+  # secret is an arn rather than name, deduce the region
+  local arnRegex='^arn:aws:secretsmanager:([^:]+):'
+  if [[ "${secretId}" =~ $arnRegex ]] ; then
+    regionFlag="--region ${BASH_REMATCH[1]}"
   fi
 
   # Extract the secret string and secret binary

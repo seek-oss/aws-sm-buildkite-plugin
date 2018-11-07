@@ -11,24 +11,11 @@ echo "--- :aws::key: Reading secrets from AWS SM"
 
 # parse env items
 while IFS='=' read -r name _ ; do
-  # support name: {env-name, secret-id, region} syntax
-  if [[ $name =~ ^(BUILDKITE_PLUGIN_AWS_SM_ENV_[0-9]+_SECRET_ID)$ ]] ; then
-    itemVar=$(echo "${name}" | sed 's/_SECRET_ID$//')
-    secretId=$(strip_quotes "${!name}")
-    envNameVar="${itemVar}_ENV_NAME"
-    exportName=$(strip_quotes "${!envNameVar}")
-    regionVar="${itemVar}_REGION"
-    region=$(strip_quotes "${!regionVar:-}")
-  # support name: secret-id syntax
-  elif [[ $name =~ ^(BUILDKITE_PLUGIN_AWS_SM_ENV_[^0-9]) ]] ; then
+  if [[ $name =~ ^(BUILDKITE_PLUGIN_AWS_SM_ENV_) ]] ; then
     exportName=$(echo "${name}" | sed 's/^BUILDKITE_PLUGIN_AWS_SM_ENV_//')
     secretId=$(strip_quotes "${!name}")
-    region=""
-  else
-    continue
+    echo "Reading ${secretId} from AWS SM into environment variable ${exportName}"
+    value=$(get_secret_value "${secretId}")
+    export "${exportName}=${value}"
   fi
-
-  echo "Reading ${secretId} from AWS SM (${region:-default region}) into environment variable ${exportName}"
-  value=$(get_secret_value "${secretId}" "no-binary" "${region}")
-  export "${exportName}=${value}"
 done < <(env | sort)
