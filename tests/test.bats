@@ -45,16 +45,16 @@ function aws() {
 }
 
 @test "Fetches values from AWS SM into env with parsed region" {
-  export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1="${SECRET_ID1}"
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET5="${SECRET_ID5}"
 
   export -f aws
 
   run "${environment_hook}"
 
   assert_success
-  assert_output --partial "Reading ${SECRET_ID1} from AWS SM into environment variable TARGET1"
+  assert_output --partial "Reading ${SECRET_ID5} from AWS SM into environment variable TARGET5"
 
-  unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET5
 }
 
 @test "Fails if attempting to read binary secret into env var" {
