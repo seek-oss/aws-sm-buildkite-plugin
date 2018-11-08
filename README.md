@@ -68,6 +68,11 @@ steps:
               secret-id: 'arn:aws:secretsmanager:ap-southeast-2:1234567:secret:my-global-file-secret'
 ```
 
+## For Secrets in Another Region
+
+This plugin supports reading AWS SM secrets from a region that is different from where your agents are running. In this case, use the ARN syntax
+rather than a secret name. The region will be deduced from the secret ARN.
+
 ## Using Secrets in Another Plugin
 
 Per the examples above, the preferred `plugin` YAML syntax is to the use an array of plugins over the object-key syntax, as this ensures consistent ordering between plugins. It's thus possible to use secrets from this plugin in another plugin:

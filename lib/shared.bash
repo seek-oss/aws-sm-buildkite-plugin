@@ -6,7 +6,14 @@ function strip_quotes() {
 
 function get_secret_value() {
   local secretId="$1"
-  local allowBinary="${2-}"
+  local allowBinary="${2:-}"
+  local regionFlag=""
+
+  # secret is an arn rather than name, deduce the region
+  local arnRegex='^arn:aws:secretsmanager:([^:]+):'
+  if [[ "${secretId}" =~ $arnRegex ]] ; then
+    regionFlag="--region ${BASH_REMATCH[1]}"
+  fi
 
   # Extract the secret string and secret binary
   # the secret is declared local before using it, per http://mywiki.wooledge.org/BashPitfalls#local_varname.3D.24.28command.29
@@ -15,6 +22,7 @@ function get_secret_value() {
   secrets=$(aws secretsmanager get-secret-value \
       --secret-id "${secretId}" \
       --version-stage AWSCURRENT \
+      $regionFlag \
       --output json \
       --query '{SecretString: SecretString, SecretBinary: SecretBinary}')
 

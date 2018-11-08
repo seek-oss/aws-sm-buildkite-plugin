@@ -15,6 +15,9 @@ export SECRET_VALUE3='{"SecretString":null,"SecretBinary":"aGVsbG8="}'
 # world
 export SECRET_ID4='secret4'
 export SECRET_VALUE4='{"SecretString":null,"SecretBinary":"d29ybGQ="}'
+# arn
+export SECRET_ID5='arn:aws:secretsmanager:ap-southeast-2:1234567:secret:secret5'
+export SECRET_VALUE5='{"SecretString":"secret","SecretBinary":null}'
 
 # this is used instead of bats mock, as many of the arguments aren't important
 # to assert...
@@ -39,6 +42,19 @@ function aws() {
 
   unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1
   unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET2
+}
+
+@test "Fetches values from AWS SM into env with parsed region" {
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET5="${SECRET_ID5}"
+
+  export -f aws
+
+  run "${environment_hook}"
+
+  assert_success
+  assert_output --partial "Reading ${SECRET_ID5} from AWS SM into environment variable TARGET5"
+
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET5
 }
 
 @test "Fails if attempting to read binary secret into env var" {
