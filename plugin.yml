@@ -1,4 +1,4 @@
-name: aws-sm
+name: AWS Secrets Manager
 description: Read secrets from AWS Secrets Manager
 author: https://github.com/seek-oss
 requirements:
