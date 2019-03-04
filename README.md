@@ -56,6 +56,22 @@ steps:
               secret-id: 'my-other-secret-file-id'
 ```
 
+## For Secrets in JSON
+
+For Secrets in JSON (e.g. you're using AWS SMs key=value support), a `jq`-compatible json-key can be specified:
+
+```yml
+steps:
+  - commands: 'echo \$MY_SECRET'
+    plugins:
+      - seek-oss/aws-sm#v1.0.1:
+          env:
+            MY_SECRET:
+              secret-id: 'my-secret-id'
+              json-key: '.Password'
+            MY_OTHER_SECRET: my-other-secret-id
+```
+
 ## For Secrets in Another Account
 
 For secrets in another AWS account, use the secret ARN.
