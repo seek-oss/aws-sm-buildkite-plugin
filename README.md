@@ -45,7 +45,7 @@ For secrets in the same AWS account as the agent, you can use the secret name ra
 steps:
   - commands: 'echo \$MY_SECRET'
     plugins:
-      - seek-oss/aws-sm#v1.0.1:
+      - seek-oss/aws-sm#v2.0.0:
           env:
             MY_SECRET: my-secret-id
             MY_OTHER_SECRET: my-other-secret-id
@@ -64,7 +64,7 @@ For Secrets in JSON (e.g. you're using AWS SMs key=value support), a `jq`-compat
 steps:
   - commands: 'echo \$MY_SECRET'
     plugins:
-      - seek-oss/aws-sm#v1.0.1:
+      - seek-oss/aws-sm#v2.0.0:
           env:
             MY_SECRET:
               secret-id: 'my-secret-id'
@@ -80,7 +80,7 @@ For secrets in another AWS account, use the secret ARN.
 steps:
   - commands: 'echo \$SECRET_FROM_OTHER_ACCOUNT'
     plugins:
-      - seek-oss/aws-sm#v1.0.1:
+      - seek-oss/aws-sm#v2.0.0:
           env:
             SECRET_FROM_OTHER_ACCOUNT: 'arn:aws:secretsmanager:ap-southeast-2:1234567:secret:my-global-secret'
           file:
@@ -101,7 +101,7 @@ Per the examples above, the preferred `plugin` YAML syntax is to the use an arra
 steps:
   - command: npm publish
     plugins:
-      - seek-oss/aws-sm#v1.0.1:
+      - seek-oss/aws-sm#v2.0.0:
           env:
             MY_TOKEN: npm-publish-token
       - seek-oss/private-npm#v1.1.1:
@@ -120,7 +120,7 @@ steps:
           image: "node:8"
           environment:
             - MY_SECRET # propagates the env var to the container (docker run -e MY_SECRET)
-      - seek-oss/aws-sm#v1.0.1:
+      - seek-oss/aws-sm#v2.0.0:
           env:
             MY_SECRET: the-secret-id
 ```
