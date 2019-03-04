@@ -8,7 +8,7 @@ post_checkout_hook="$PWD/hooks/post-checkout"
 export SECRET_ID1='secret1'
 export SECRET_VALUE1='{"SecretString":"pretty-secret","SecretBinary":null}'
 export SECRET_ID2='secret2'
-export SECRET_VALUE2='{"SecretString":"topsecret","SecretBinary":null}'
+export SECRET_VALUE2='{"SecretString":"{\"nested\":\"secret\"}","SecretBinary":null}'
 # hello
 export SECRET_ID3='secret3'
 export SECRET_VALUE3='{"SecretString":null,"SecretBinary":"aGVsbG8="}'
@@ -42,6 +42,40 @@ function aws() {
 
   unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1
   unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET2
+}
+
+@test "Fetches values from AWS SM into env with explicit secret-id" {
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1_SECRET_ID="${SECRET_ID1}"
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET2_SECRET_ID="'${SECRET_ID2}'"
+
+  export -f aws
+
+  run "${environment_hook}"
+
+  assert_success
+  assert_output --partial "Reading ${SECRET_ID1} from AWS SM into environment variable TARGET1"
+  assert_output --partial "Reading ${SECRET_ID2} from AWS SM into environment variable TARGET2"
+
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1_SECRET_ID
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET2_SECRET_ID
+}
+
+@test "Fetches values from AWS SM into with env with from JSON key" {
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1="${SECRET_ID1}"
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET2_SECRET_ID="'${SECRET_ID2}'"
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET2_JSON_KEY=".nested"
+
+  export -f aws
+
+  run "${environment_hook}"
+
+  assert_success
+  assert_output --partial "Reading ${SECRET_ID1} from AWS SM into environment variable TARGET1"
+  assert_output --partial "Reading ${SECRET_ID2} from AWS SM into environment variable TARGET2"
+
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET2_SECRET_ID
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET2_JSON_KEY
 }
 
 @test "Fetches values from AWS SM into env with parsed region" {
