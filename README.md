@@ -19,7 +19,7 @@ This plugin supports both `SecretString` and `SecretBinary` [AWS SM secret types
 
 ## SecretString
 
-A AWS SM secret string may be plaintext or key/value. If you create a key/value secret, then the JSON will be returned. This plugin does not yet support expanding the plugin for you, but `jq` can be used to pull JSON values out.
+A AWS SM secret string may be plaintext or key/value. If you create a key/value secret, then the JSON will be returned. This plugin does not yet support expanding the JSON for you, but `jq` can be used to pull JSON values out.
 
 `SecretString`s can be exposed in an environment variable (`env`) or saved to a file.
 
