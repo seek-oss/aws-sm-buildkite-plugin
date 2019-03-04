@@ -19,9 +19,13 @@ This plugin supports both `SecretString` and `SecretBinary` [AWS SM secret types
 
 ## SecretString
 
-A AWS SM secret string may be plaintext or key/value. If you create a key/value secret, then the JSON will be returned. This plugin does not yet support expanding the JSON for you, but `jq` can be used to pull JSON values out.
+A AWS SM secret string may be plaintext or key/value. **If you create a key/value secret, then the JSON will be returned.**
 
 `SecretString`s can be exposed in an environment variable (`env`) or saved to a file.
+
+### JSON
+
+This plugin supports expanding the secret JSON for you, which saves you from having to use `jq` pull JSON values out.
 
 ## SecretBinary
 
@@ -50,6 +54,22 @@ steps:
               secret-id: 'my-secret-file-id'
             - path: 'save-my-other-secret-here'
               secret-id: 'my-other-secret-file-id'
+```
+
+## For Secrets in JSON
+
+For Secrets in JSON (e.g. you're using AWS SMs key=value support), a `jq`-compatible json-key can be specified:
+
+```yml
+steps:
+  - commands: 'echo \$MY_SECRET'
+    plugins:
+      - seek-oss/aws-sm#v1.0.1:
+          env:
+            MY_SECRET:
+              secret-id: 'my-secret-id'
+              json-key: '.Password'
+            MY_OTHER_SECRET: my-other-secret-id
 ```
 
 ## For Secrets in Another Account
