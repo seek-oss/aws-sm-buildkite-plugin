@@ -95,7 +95,7 @@ rather than a secret name. The region will be deduced from the secret ARN.
 
 ## Using Secrets in Another Plugin
 
-Per the examples above, the preferred `plugin` YAML syntax is to the use an array of plugins over the object-key syntax, as this ensures consistent ordering between plugins. It's thus possible to use secrets from this plugin in another plugin:
+Per the examples above, the preferred `plugin` YAML syntax is to use an array of plugins over the object-key syntax, as this ensures consistent ordering between plugins. It's thus possible to use secrets from this plugin in another plugin:
 
 ```yml
 steps:
@@ -116,13 +116,13 @@ Note that if you're using the [Docker plugin](https://github.com/buildkite-plugi
 steps:
   - command: echo $$MY_SECRET
     plugins:
+      - seek-oss/aws-sm#v2.0.0:
+          env:
+            MY_SECRET: the-secret-id
       - docker#v1.4.0:
           image: "node:8"
           environment:
             - MY_SECRET # propagates the env var to the container (docker run -e MY_SECRET)
-      - seek-oss/aws-sm#v2.0.0:
-          env:
-            MY_SECRET: the-secret-id
 ```
 
 # Tests
