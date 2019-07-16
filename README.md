@@ -72,6 +72,31 @@ steps:
             MY_OTHER_SECRET: my-other-secret-id
 ```
 
+## To apply all keys in a JSON secret as environment variables
+
+```yml
+steps:
+  - commands: 'echo \$MY_SECRET'
+    plugins:
+      - seek-oss/aws-sm#v2.0.0:
+        json-to-env:
+          - secret-id: "my-secret-id"
+            json-key: ".Variables"
+```
+
+With the above setting, a secret called `my-secret-id` with the contents:
+
+```json
+{
+  "Variables": {
+    "MY_SECRET": "value",
+    "MY_OTHER_SECRET": "other value"
+  }
+}
+```
+
+would set the `MY_SECRET` and `MY_OTHER_SECRET` environment variables.
+
 ## For Secrets in Another Account
 
 For secrets in another AWS account, use the secret ARN.

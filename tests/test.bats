@@ -19,6 +19,18 @@ export SECRET_VALUE4='{"SecretString":null,"SecretBinary":"d29ybGQ="}'
 export SECRET_ID5='arn:aws:secretsmanager:ap-southeast-2:1234567:secret:secret5'
 export SECRET_VALUE5='{"SecretString":"secret","SecretBinary":null}'
 
+export SECRET_ID6='secret6'
+export SECRET_VALUE6='{"SecretString":"{\"MY_VAR\":\"secret\",\"MY_OTHER_VAR\":\"stuff\"}","SecretBinary":null}'
+
+export SECRET_ID7='secret7'
+export JSON_KEY7='.my_key'
+export SECRET_VALUE7='{"SecretString":"{\"my_key\":{\"NESTED_VAR\":\"secret\",\"OTHER_NESTED_VAR\":\"stuff\"}}","SecretBinary":null}'
+
+export SECRET_ID8='secret8'
+export SECRET_VALUE8='{"SecretString":"{\"FIRST_SET\":\"secret\"}","SecretBinary":null}'
+export SECRET_ID9='secret9'
+export SECRET_VALUE9='{"SecretString":"{\"SECOND_SET\":\"second secret\"}","SecretBinary":null}'
+
 # this is used instead of bats mock, as many of the arguments aren't important
 # to assert...
 function aws() {
@@ -133,4 +145,54 @@ function aws() {
   unset BUILDKITE_PLUGIN_AWS_SM_FILE_0_SECRET_ID
   unset BUILDKITE_PLUGIN_AWS_SM_FILE_1_PATH
   unset BUILDKITE_PLUGIN_AWS_SM_FILE_1_SECRET_ID
+}
+
+@test "Fetches all environment variables from JSON without JSON key" {
+  export BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_SECRET_ID="${SECRET_ID6}"
+
+  export -f aws
+
+  run "${environment_hook}"
+
+  assert_success
+  assert_output --partial "Reading all environment variables from ${SECRET_ID6} in AWS SM"
+  assert_output --partial "Setting environment variable MY_VAR"
+  assert_output --partial "Setting environment variable MY_OTHER_VAR"
+
+  unset BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_SECRET_ID
+}
+
+@test "Fetches all environment variables from JSON with JSON key" {
+  export BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_SECRET_ID="${SECRET_ID7}"
+  export BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_JSON_KEY="${JSON_KEY7}"
+
+  export -f aws
+
+  run "${environment_hook}"
+
+  assert_success
+  assert_output --partial "Reading all environment variables from ${SECRET_ID7} in AWS SM"
+  assert_output --partial "Setting environment variable NESTED_VAR"
+  assert_output --partial "Setting environment variable OTHER_NESTED_VAR"
+
+  unset BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_SECRET_ID
+  unset BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_JSON_KEY
+}
+
+@test "Fetches all environment variables from multiple JSON secrets" {
+  export BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_0_SECRET_ID="${SECRET_ID8}"
+  export BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_1_SECRET_ID="${SECRET_ID9}"
+
+  export -f aws
+
+  run "${environment_hook}"
+
+  assert_success
+  assert_output --partial "Reading all environment variables from ${SECRET_ID8} in AWS SM"
+  assert_output --partial "Setting environment variable FIRST_SET"
+  assert_output --partial "Reading all environment variables from ${SECRET_ID9} in AWS SM"
+  assert_output --partial "Setting environment variable SECOND_SET"
+
+  unset BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_0_SECRET_ID
+  unset BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_1_SECRET_ID
 }
