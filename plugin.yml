@@ -10,4 +10,6 @@ configuration:
       type: object
     file:
       type: array
+    json-to-env:
+      type: array
   required: []

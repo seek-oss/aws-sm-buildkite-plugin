@@ -72,21 +72,16 @@ steps:
             MY_OTHER_SECRET: my-other-secret-id
 ```
 
-Some points of note:
-
- * JSON keys are mapped into environment variables by replacing special characters with `_`. E.g. `My-great key!` would become `My_great_key_`
- * JSON keys with spaces are supported via `json-key: '."My key with a space"'` per normal jq syntax
-
-### To apply all keys in a JSON secret as environment variables
+## To apply all keys in a JSON secret as environment variables
 
 ```yml
 steps:
   - commands: 'echo \$MY_SECRET'
     plugins:
       - seek-oss/aws-sm#v2.0.0:
-        json-to-env:
-          - secret-id: "my-secret-id"
-            json-key: ".Variables"
+          json-to-env:
+            - secret-id: "my-secret-id"
+              json-key: ".Variables"
 ```
 
 With the above setting, a secret called `my-secret-id` with the contents:
@@ -101,6 +96,11 @@ With the above setting, a secret called `my-secret-id` with the contents:
 ```
 
 would set the `MY_SECRET` and `MY_OTHER_SECRET` environment variables.
+
+Some points of note:
+
+ * JSON keys are mapped into environment variables by replacing special characters with `_`. E.g. `My-great key!` would become `My_great_key_`
+ * JSON keys with spaces are supported via `json-key: '."My key with a space"'` per normal jq syntax
 
 ## For Secrets in Another Account
 
