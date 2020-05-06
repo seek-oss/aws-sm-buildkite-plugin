@@ -30,8 +30,13 @@ load_all_secrets_into_env() {
   local secret_value
   echo "Reading all environment variables from ${secret_id} in AWS SM"
   secret_value="$(get_secret_value "${secret_id}")"
-  for s in $(echo ${secret_value} | jq "${json_key} | to_entries[]" | jq -r '.key + "=" + .value'); do
-    echo "Setting environment variable `echo $s | sed s/=.*//g`"
+  local IFS=$'\n'
+  # the variable is sanitised in jq to avoid problems with keys containing =
+  # raw output isn't used here to avoid messing the secrets that contain spaces
+  for s in $(jq "${json_key}" <<< "${secret_value}" | jq 'to_entries[] | (.key | sub("[^A-Za-z0-9_]"; "_"; "g")) + "=" + .value'); do
+    # convert JSON strings back into raw, e.g \n -> becomes a newline
+    s="$(jq -r '.' <<< "${s}")"
+    echo "Setting environment variable $(sed s/=.*//g <<< "$s")"
     export "$s"
   done
 }
@@ -62,6 +67,7 @@ while IFS='=' read -r name _ ; do
     secret_id="$(strip_quotes "${!name}")"
     load_secret_into_env "${export_name}" "${secret_id}" "${json_key}"
   elif [[ $name =~ ^(BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV) ]] ; then
+    # handle json-to-env: config
     if [[ $name =~ (_SECRET_ID)$ ]] ; then
       # get the secret key to pull all the ENV variables from
       export_id=$(echo "${name}" | sed 's/^BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV//' | sed 's/_SECRET_ID$//')

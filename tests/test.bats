@@ -24,12 +24,13 @@ export SECRET_VALUE6='{"SecretString":"{\"MY_VAR\":\"secret\",\"MY_OTHER_VAR\":\
 
 export SECRET_ID7='secret7'
 export JSON_KEY7='.my_key'
-export SECRET_VALUE7='{"SecretString":"{\"my_key\":{\"NESTED_VAR\":\"secret\",\"OTHER_NESTED_VAR\":\"stuff\"}}","SecretBinary":null}'
+export JSON_KEY_WITH_SPACE7='."key with space"'
+export SECRET_VALUE7='{"SecretString":"{\"my_key\":{\"NESTED_VAR\":\"secret\",\"OTHER_NESTED_VAR\":\"stuff\"},\"key with space\":{\"NEST\":\"very secret\"}}","SecretBinary":null}'
 
 export SECRET_ID8='secret8'
-export SECRET_VALUE8='{"SecretString":"{\"FIRST_SET\":\"secret\"}","SecretBinary":null}'
+export SECRET_VALUE8='{"SecretString":"{\"FIRST_SET\":\"secret with a\\nnewline\"}","SecretBinary":null}'
 export SECRET_ID9='secret9'
-export SECRET_VALUE9='{"SecretString":"{\"SECOND_SET\":\"second secret\"}","SecretBinary":null}'
+export SECRET_VALUE9='{"SecretString":"{\"SECOND SET\":\"second secret\"}","SecretBinary":null}'
 
 # this is used instead of bats mock, as many of the arguments aren't important
 # to assert...
@@ -174,6 +175,22 @@ function aws() {
   assert_output --partial "Reading all environment variables from ${SECRET_ID7} in AWS SM"
   assert_output --partial "Setting environment variable NESTED_VAR"
   assert_output --partial "Setting environment variable OTHER_NESTED_VAR"
+
+  unset BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_SECRET_ID
+  unset BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_JSON_KEY
+}
+
+@test "Fetches all environment variables from JSON with JSON key that contains a space" {
+  export BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_SECRET_ID="${SECRET_ID7}"
+  export BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_JSON_KEY="${JSON_KEY_WITH_SPACE7}"
+
+  export -f aws
+
+  run "${environment_hook}"
+
+  assert_success
+  assert_output --partial "Reading all environment variables from ${SECRET_ID7} in AWS SM"
+  assert_output --partial "Setting environment variable NEST"
 
   unset BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_SECRET_ID
   unset BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_JSON_KEY

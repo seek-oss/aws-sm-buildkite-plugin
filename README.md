@@ -72,7 +72,12 @@ steps:
             MY_OTHER_SECRET: my-other-secret-id
 ```
 
-## To apply all keys in a JSON secret as environment variables
+Some points of note:
+
+ * JSON keys are mapped into environment variables by replacing special characters with `_`. E.g. `My-great key!` would become `My_great_key_`
+ * JSON keys with spaces are supported via `json-key: '."My key with a space"'` per normal jq syntax
+
+### To apply all keys in a JSON secret as environment variables
 
 ```yml
 steps:
