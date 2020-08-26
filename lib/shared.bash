@@ -13,11 +13,11 @@ function get_secret_value() {
   # secret is an arn rather than name, deduce the region
   local arnRegex='^arn:aws:secretsmanager:([^:]+):'
   if [[ "${secretId}" =~ $arnRegex ]] ; then
-    regionFlag="--region \"${BASH_REMATCH[1]}\""
+    regionFlag="--region ${BASH_REMATCH[1]}"
   fi
 
   if [[ -n "$BUILDKITE_PLUGIN_AWS_SM_ENDPOINT_URL" ]] ; then
-    endpointUrlFlag="--endpoint-url \"$BUILDKITE_PLUGIN_AWS_SM_ENDPOINT_URL\""
+    endpointUrlFlag="--endpoint-url $BUILDKITE_PLUGIN_AWS_SM_ENDPOINT_URL"
   fi
 
   # Extract the secret string and secret binary
