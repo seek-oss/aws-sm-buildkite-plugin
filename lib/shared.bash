@@ -8,11 +8,16 @@ function get_secret_value() {
   local secretId="$1"
   local allowBinary="${2:-}"
   local regionFlag=""
+  local endpointUrlFlag=""
 
   # secret is an arn rather than name, deduce the region
   local arnRegex='^arn:aws:secretsmanager:([^:]+):'
   if [[ "${secretId}" =~ $arnRegex ]] ; then
-    regionFlag="--region ${BASH_REMATCH[1]}"
+    regionFlag="--region \"${BASH_REMATCH[1]}\""
+  fi
+
+  if [[ -n "$BUILDKITE_PLUGIN_AWS_SM_ENDPOINT_URL" ]] ; then
+    endpointUrlFlag="--endpoint-url \"$BUILDKITE_PLUGIN_AWS_SM_ENDPOINT_URL\""
   fi
 
   # Extract the secret string and secret binary
@@ -23,6 +28,7 @@ function get_secret_value() {
       --secret-id "${secretId}" \
       --version-stage AWSCURRENT \
       $regionFlag \
+      $endpointUrlFlag \
       --output json \
       --query '{SecretString: SecretString, SecretBinary: SecretBinary}')
 
