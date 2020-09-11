@@ -1,5 +1,7 @@
 #!/bin/bash
 
+BUILDKITE_PLUGIN_AWS_SM_ENDPOINT_URL="${BUILDKITE_PLUGIN_AWS_SM_ENDPOINT_URL:-}"
+
 function strip_quotes() {
   echo "${1}" | sed "s/^[ \t]*//g;s/[ \t]*$//g;s/[\"']//g"
 }
