@@ -12,4 +12,6 @@ configuration:
       type: array
     json-to-env:
       type: array
+    endpoint-url:
+      type: string
   required: []

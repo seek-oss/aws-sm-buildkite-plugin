@@ -123,6 +123,21 @@ steps:
 This plugin supports reading AWS SM secrets from a region that is different from where your agents are running. In this case, use the ARN syntax
 rather than a secret name. The region will be deduced from the secret ARN.
 
+## For use with VPC Endpoints
+
+You may want to specify a custom `endpoint-url` if you are using a [VPC endpoint](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints.html)
+for increased security.
+
+```yml
+steps:
+  - commands: 'echo \$MY_SECRET'
+    plugins:
+      - seek-oss/aws-sm#v2.1.0:
+          endpoint-url: https://vpce-12345-abcd.secretsmanager.us-east-1.vpce.amazonaws.com
+          env:
+            MY_SECRET: my-secret-id
+```
+
 ## Using Secrets in Another Plugin
 
 Per the examples above, the preferred `plugin` YAML syntax is to use an array of plugins over the object-key syntax, as this ensures consistent ordering between plugins. It's thus possible to use secrets from this plugin in another plugin:
