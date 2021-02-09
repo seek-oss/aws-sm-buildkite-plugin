@@ -120,8 +120,17 @@ steps:
 
 ### For Secrets in Another Region
 
-This plugin supports reading AWS SM secrets from a region that is different from where your agents are running. In this case, use the ARN syntax
-rather than a secret name. The region will be deduced from the secret ARN.
+This plugin supports reading AWS SM secrets from a region that is different from where your agents are running. In this case, you can either use the ARN syntax to deduce the region from the secret ARN or you can set it directly using the `region` parameter.
+
+```yml
+steps:
+  - commands: 'echo \$SECRET_FROM_OTHER_REGION'
+    plugins:
+      - seek-oss/aws-sm#v2.2.1:
+          region: us-east-1
+          env:
+            SECRET_FROM_OTHER_REGION: my-secret-id
+```
 
 ### For use with VPC Endpoints
 
