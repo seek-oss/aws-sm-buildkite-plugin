@@ -18,6 +18,10 @@ function get_secret_value() {
     regionFlag="--region ${BASH_REMATCH[1]}"
   fi
 
+  if [[ -n "$BUILDKITE_PLUGIN_AWS_SM_REGION" ]] ; then
+    regionFlag="--region $BUILDKITE_PLUGIN_AWS_SM_REGION"
+  fi
+
   if [[ -n "$BUILDKITE_PLUGIN_AWS_SM_ENDPOINT_URL" ]] ; then
     endpointUrlFlag="--endpoint-url $BUILDKITE_PLUGIN_AWS_SM_ENDPOINT_URL"
   fi
