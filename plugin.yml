@@ -6,12 +6,14 @@ requirements:
   - jq
 configuration:
   properties:
+    endpoint-url:
+      type: string
     env:
       type: object
     file:
       type: array
     json-to-env:
       type: array
-    endpoint-url:
+    region:
       type: string
   required: []
