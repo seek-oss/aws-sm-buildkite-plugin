@@ -29,11 +29,13 @@ This plugin supports expanding the secret JSON for you, which saves you from hav
 
 ### SecretBinary
 
-Binary secrets can be saved to a file. They cannot be used with `env` (as they contain binary data).
+Binary secrets can be saved to a file.
+They cannot be used with `env` (as they contain binary data).
 
 ## Examples
 
-Ensure to escape the variable expression when using it in your steps, e.g. `$$MY_SECRET` or `\$MY_SECRET`. This is due to [how buildkite interpolates variables on pipeline upload](https://buildkite.com/docs/agent/v3/cli-pipeline#environment-variable-substitution):
+Ensure to escape the variable expression when using it in your steps, e.g. `$$MY_SECRET` or `\$MY_SECRET`.
+This is due to [how buildkite interpolates variables on pipeline upload](https://buildkite.com/docs/agent/v3/cli-pipeline#environment-variable-substitution):
 
 > If you want an environment variable to be evaluated at run-time (for example, using the step’s environment variables) make sure to escape the $ character using $$ or \$. For example:
 
@@ -45,7 +47,7 @@ For secrets in the same AWS account as the agent, you can use the secret name ra
 steps:
   - commands: 'echo \$MY_SECRET'
     plugins:
-      - seek-oss/aws-sm#v2.2.1:
+      - seek-oss/aws-sm#v2.3.0:
           env:
             MY_SECRET: my-secret-id
             MY_OTHER_SECRET: my-other-secret-id
@@ -64,7 +66,7 @@ For Secrets in JSON (e.g. you're using AWS SMs key=value support), a `jq`-compat
 steps:
   - commands: 'echo \$MY_SECRET'
     plugins:
-      - seek-oss/aws-sm#v2.2.1:
+      - seek-oss/aws-sm#v2.3.0:
           env:
             MY_SECRET:
               secret-id: "my-secret-id"
@@ -78,7 +80,7 @@ steps:
 steps:
   - commands: 'echo \$MY_SECRET'
     plugins:
-      - seek-oss/aws-sm#v2.2.1:
+      - seek-oss/aws-sm#v2.3.0:
           json-to-env:
             - secret-id: "my-secret-id"
               json-key: ".Variables"
@@ -99,7 +101,8 @@ would set the `MY_SECRET` and `MY_OTHER_SECRET` environment variables.
 
 Some points of note:
 
-- JSON keys are mapped into environment variables by replacing special characters with `_`. E.g. `My-great key!` would become `My_great_key_`
+- JSON keys are mapped into environment variables by replacing special characters with `_`.
+  E.g. `My-great key!` would become `My_great_key_`
 - JSON keys with spaces are supported via `json-key: '."My key with a space"'` per normal jq syntax
 
 ### For Secrets in Another Account
@@ -110,7 +113,7 @@ For secrets in another AWS account, use the secret ARN.
 steps:
   - commands: 'echo \$SECRET_FROM_OTHER_ACCOUNT'
     plugins:
-      - seek-oss/aws-sm#v2.2.1:
+      - seek-oss/aws-sm#v2.3.0:
           env:
             SECRET_FROM_OTHER_ACCOUNT: "arn:aws:secretsmanager:ap-southeast-2:1234567:secret:my-global-secret"
           file:
@@ -120,13 +123,14 @@ steps:
 
 ### For Secrets in Another Region
 
-This plugin supports reading AWS SM secrets from a region that is different from where your agents are running. In this case, you can either use the ARN syntax to deduce the region from the secret ARN or you can set it directly using the `region` parameter.
+This plugin supports reading AWS SM secrets from a region that is different from where your agents are running.
+In this case, you can either use the ARN syntax to deduce the region from the secret ARN or you can set it directly using the `region` parameter.
 
 ```yml
 steps:
   - commands: 'echo \$SECRET_FROM_OTHER_REGION'
     plugins:
-      - seek-oss/aws-sm#v2.2.1:
+      - seek-oss/aws-sm#v2.3.0:
           region: us-east-1
           env:
             SECRET_FROM_OTHER_REGION: my-secret-id
@@ -141,7 +145,7 @@ for increased security.
 steps:
   - commands: 'echo \$MY_SECRET'
     plugins:
-      - seek-oss/aws-sm#v2.2.1:
+      - seek-oss/aws-sm#v2.3.0:
           endpoint-url: https://vpce-12345-abcd.secretsmanager.us-east-1.vpce.amazonaws.com
           env:
             MY_SECRET: my-secret-id
@@ -149,13 +153,14 @@ steps:
 
 ### Using Secrets in Another Plugin
 
-Per the examples above, the preferred `plugin` YAML syntax is to use an array of plugins over the object-key syntax, as this ensures consistent ordering between plugins. It's thus possible to use secrets from this plugin in another plugin:
+Per the examples above, the preferred `plugin` YAML syntax is to use an array of plugins over the object-key syntax, as this ensures consistent ordering between plugins.
+It's thus possible to use secrets from this plugin in another plugin:
 
 ```yml
 steps:
   - command: npm publish
     plugins:
-      - seek-oss/aws-sm#v2.2.1:
+      - seek-oss/aws-sm#v2.3.0:
           env:
             MY_TOKEN: npm-publish-token
       - seek-oss/private-npm#v1.1.1:
@@ -170,7 +175,7 @@ Note that if you're using the [Docker plugin](https://github.com/buildkite-plugi
 steps:
   - command: echo $$MY_SECRET
     plugins:
-      - seek-oss/aws-sm#v2.2.1:
+      - seek-oss/aws-sm#v2.3.0:
           env:
             MY_SECRET: the-secret-id
       - docker#v1.4.0:
