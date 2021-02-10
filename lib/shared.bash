@@ -1,6 +1,7 @@
 #!/bin/bash
 
 BUILDKITE_PLUGIN_AWS_SM_ENDPOINT_URL="${BUILDKITE_PLUGIN_AWS_SM_ENDPOINT_URL:-}"
+BUILDKITE_PLUGIN_AWS_SM_REGION="${BUILDKITE_PLUGIN_AWS_SM_REGION:-}"
 
 function strip_quotes() {
   echo "${1}" | sed "s/^[[:blank:]]*//g;s/[[:blank:]]*$//g;s/[\"']//g"
@@ -18,12 +19,12 @@ function get_secret_value() {
     regionFlag="--region ${BASH_REMATCH[1]}"
   fi
 
-  if [[ -n "$BUILDKITE_PLUGIN_AWS_SM_REGION" ]] ; then
-    regionFlag="--region $BUILDKITE_PLUGIN_AWS_SM_REGION"
+  if [[ -n "${BUILDKITE_PLUGIN_AWS_SM_REGION}" ]] ; then
+    regionFlag="--region ${BUILDKITE_PLUGIN_AWS_SM_REGION}"
   fi
 
-  if [[ -n "$BUILDKITE_PLUGIN_AWS_SM_ENDPOINT_URL" ]] ; then
-    endpointUrlFlag="--endpoint-url $BUILDKITE_PLUGIN_AWS_SM_ENDPOINT_URL"
+  if [[ -n "${BUILDKITE_PLUGIN_AWS_SM_ENDPOINT_URL}" ]] ; then
+    endpointUrlFlag="--endpoint-url ${BUILDKITE_PLUGIN_AWS_SM_ENDPOINT_URL}"
   fi
 
   # Extract the secret string and secret binary
