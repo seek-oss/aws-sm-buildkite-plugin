@@ -73,6 +73,21 @@ function aws() {
   unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET2_SECRET_ID
 }
 
+@test "Fetches values from AWS SM into env with explicit secret-id and export-name" {
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1_SECRET_ID="${SECRET_ID1}"
+  export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1_EXPORT_NAME="Target1"
+
+  export -f aws
+
+  run "${environment_hook}"
+
+  assert_success
+  assert_output --partial "Reading ${SECRET_ID1} from AWS SM into environment variable Target1"
+
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1_SECRET_ID
+  unset BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1_EXPORT_NAME
+}
+
 @test "Fetches values from AWS SM into with env with from JSON key" {
   export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET1="${SECRET_ID1}"
   export BUILDKITE_PLUGIN_AWS_SM_ENV_TARGET2_SECRET_ID="'${SECRET_ID2}'"
