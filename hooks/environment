@@ -46,16 +46,30 @@ while IFS='=' read -r name _ ; do
   if [[ $name =~ ^(BUILDKITE_PLUGIN_AWS_SM_ENV_) ]] ; then
     # Special nested value (rather than just a secret id)
     if [[ $name =~ (_SECRET_ID)$ ]] ; then
-      # get the export name from the key, e.g.
+      # get the export name from an explicit export-name key, e.g.
       # env:
-      #   KEY_NAME:
+      #   unused:
       #     secret-id: 'my-secret-id'
-      export_name=$(echo "${name}" | sed 's/^BUILDKITE_PLUGIN_AWS_SM_ENV_//' | sed 's/_SECRET_ID$//')
+      #     export-name: 'SOME_mixed_CASE_env_Var'
+      export_name_var=$(echo "${name}" | sed 's/_SECRET_ID$/_EXPORT_NAME/')
+      export_name="${!export_name_var:-}"
+
+      if [[ -z "$export_name" ]]; then
+        # get the export name from the parent key, e.g.
+        # env:
+        #   KEY_NAME:
+        #     secret-id: 'my-secret-id'
+        export_name=$(echo "${name}" | sed 's/^BUILDKITE_PLUGIN_AWS_SM_ENV_//' | sed 's/_SECRET_ID$//')
+      fi
+
       # load the JSON key if we have one
       json_key_var="BUILDKITE_PLUGIN_AWS_SM_ENV_${export_name}_JSON_KEY"
       json_key="${!json_key_var:-}"
     elif [[ $name =~ (_JSON_KEY)$ ]] ; then
       # ignore this, is used for when loading via _SECRET_ID
+      continue
+    elif [[ $name =~ (_EXPORT_NAME)$ ]] ; then
+      # ignore this, is used for when loading with _EXPORT_NAME
       continue
     else
       # Handle plain key=value, e.g

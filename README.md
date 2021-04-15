@@ -58,6 +58,21 @@ steps:
               secret-id: "my-other-secret-file-id"
 ```
 
+Note that environment variable names passed as keys to the `env` block are converted to UPPER_CASE. If you need to set
+a lower-cased environment variable name you can pass the `export-name` property:
+
+```yaml
+steps:
+  - commands: 'echo \$someSecret'
+    plugins:
+      - seek-oss/aws-sm#v2.3.1:
+          env:
+            some_secret:  # <- this is ignored
+              export-name: someSecret
+              secret-id: my-secret-id
+```
+
+
 ### For Secrets in JSON
 
 For Secrets in JSON (e.g. you're using AWS SMs key=value support), a `jq`-compatible json-key can be specified:
