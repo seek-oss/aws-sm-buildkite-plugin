@@ -1,0 +1,12 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: aws-sm-buildkite-plugin
+  description: AWS Secrets Manager Buildkite Plugin
+  annotations:
+    github.com/project-slug: https://github.com/blstrco/aws-sm-buildkite-plugin
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: Component
+  lifecycle: experimental
+  owner: "linktree"
