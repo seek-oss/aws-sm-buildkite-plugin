@@ -16,3 +16,4 @@ spec:
   type: Component
   lifecycle: internal
   owner: developer-platform
+  system: buildkite
