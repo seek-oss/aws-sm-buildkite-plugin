@@ -2,6 +2,7 @@
 
 BUILDKITE_PLUGIN_AWS_SM_ENDPOINT_URL="${BUILDKITE_PLUGIN_AWS_SM_ENDPOINT_URL:-}"
 BUILDKITE_PLUGIN_AWS_SM_REGION="${BUILDKITE_PLUGIN_AWS_SM_REGION:-}"
+BUILDKITE_PLUGIN_AWS_SM_PROFILE="${BUILDKITE_PLUGIN_AWS_SM_PROFILE:-${AWS_PROFILE:-default}}"
 
 function strip_quotes() {
   echo "${1}" | sed "s/^[[:blank:]]*//g;s/[[:blank:]]*$//g;s/[\"']//g"
@@ -36,6 +37,7 @@ function get_secret_value() {
       --version-stage AWSCURRENT \
       $regionFlag \
       $endpointUrlFlag \
+      --profile $BUILDKITE_PLUGIN_AWS_SM_PROFILE \
       --output json \
       --query '{SecretString: SecretString, SecretBinary: SecretBinary}')
 
