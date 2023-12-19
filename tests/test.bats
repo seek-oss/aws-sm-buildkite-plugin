@@ -218,7 +218,6 @@ function aws() {
   unset BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_1_SECRET_ID
 }
 
-
 @test "Fetches all environment variables from JSON with JSON key, avoid logging secrets that contain newlines" {
   export BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_SECRET_ID="${SECRET_ID10}"
   export BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_JSON_KEY="${JSON_KEY10}"
