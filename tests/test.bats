@@ -32,11 +32,15 @@ export SECRET_VALUE8='{"SecretString":"{\"FIRST_SET\":\"secret with a\\nnewline\
 export SECRET_ID9='secret9'
 export SECRET_VALUE9='{"SecretString":"{\"SECOND SET\":\"second secret\"}","SecretBinary":null}'
 
+export SECRET_ID10='secret10'
+export JSON_KEY10='.key'
+export SECRET_VALUE10='{"SecretString":"{\"key\":{\"BEFORE\":\"before\",\"MULTILINE\":\"--- TEST KEY ---\\nabcdefghijklmn\\nopqrstuvwxyz\\n--- END TEST KEY ---\\n\",\"AFTER\":\"after\"}}","SecretBinary":null}'
+
 # this is used instead of bats mock, as many of the arguments aren't important
 # to assert...
 function aws() {
   # echo the secret value based on its id
-  read secretNo < <(echo "$@" | grep -o 'secret[0-9]' | grep -o '[0-9]')
+  read secretNo < <(echo "$@" | grep -o 'secret[0-9]*' | grep -o '[0-9]*')
   local secretVar="SECRET_VALUE${secretNo}"
   echo "${!secretVar}"
 }
@@ -212,4 +216,26 @@ function aws() {
 
   unset BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_0_SECRET_ID
   unset BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_1_SECRET_ID
+}
+
+
+@test "Fetches all environment variables from JSON with JSON key, avoid logging secrets that contain newlines" {
+  export BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_SECRET_ID="${SECRET_ID10}"
+  export BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_JSON_KEY="${JSON_KEY10}"
+
+  export -f aws
+
+  run "${environment_hook}"
+
+  assert_success
+  expected_output=$(printf '%s\n%s\n[31m\n[0m\n%s\n%s\n%s\n' \
+    "--- :aws::key: Reading secrets from AWS SM" \
+    "Reading all environment variables from ${SECRET_ID10} in AWS SM" \
+    "Setting environment variable BEFORE" \
+    "Setting environment variable MULTILINE" \
+    "Setting environment variable AFTER" )
+  assert_output "$expected_output"
+
+  unset BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_SECRET_ID
+  unset BUILDKITE_PLUGIN_AWS_SM_JSON_TO_ENV_JSON_KEY
 }
