@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-load "$BATS_PATH/load.bash"
+load "${BATS_PLUGIN_PATH}/load.bash"
 
 environment_hook="$PWD/hooks/environment"
 post_checkout_hook="$PWD/hooks/post-checkout"
