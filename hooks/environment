@@ -36,7 +36,7 @@ load_all_secrets_into_env() {
   for s in $(jq "${json_key}" <<< "${secret_value}" | jq 'to_entries[] | (.key | sub("[^A-Za-z0-9_]"; "_"; "g")) + "=" + .value'); do
     # convert JSON strings back into raw, e.g \n -> becomes a newline
     s="$(jq -r '.' <<< "${s}")"
-    echo "Setting environment variable $(sed s/=.*//g <<< "$s")"
+    echo "Setting environment variable $(sed s/=.*//g <<< "$(head -n 1 <<< "$s")")"
     export "$s"
   done
 }
