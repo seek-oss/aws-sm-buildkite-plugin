@@ -7,7 +7,7 @@ DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 # shellcheck source=lib/shared.bash
 . "$DIR/../lib/shared.bash"
 
-echo "--- :aws::key: Reading secrets from AWS SM"
+echo "~~~ :aws::key: Reading secrets from AWS SM"
 
 load_secret_into_env() {
   local export_name="$1"

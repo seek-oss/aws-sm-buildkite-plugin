@@ -228,7 +228,7 @@ function aws() {
 
   assert_success
   expected_output=$(printf '%s\n%s\n[31m\n[0m\n%s\n%s\n%s\n' \
-    "--- :aws::key: Reading secrets from AWS SM" \
+    "~~~ :aws::key: Reading secrets from AWS SM" \
     "Reading all environment variables from ${SECRET_ID10} in AWS SM" \
     "Setting environment variable BEFORE" \
     "Setting environment variable MULTILINE" \
