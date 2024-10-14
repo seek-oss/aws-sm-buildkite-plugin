@@ -136,21 +136,6 @@ steps:
             SECRET_FROM_OTHER_REGION: my-secret-id
 ```
 
-### For Secrets available to another AWS Profile
-
-This plugin by default uses your current global AWS profile where your agent is running.
-To use another profile for _all the secrets_ you can set it directly with the `profile` parameter.
-
-```yml
-steps:
-  - commands: 'echo \$SECRET_FROM_OTHER_REGION'
-    plugins:
-      - seek-oss/aws-sm#v2.3.1:
-          profile: profile-name
-          env:
-            SECRET_FROM_OTHER_PROFILE: my-secret-id
-```
-
 ### For use with VPC Endpoints
 
 You may want to specify a custom `endpoint-url` if you are using a [VPC endpoint](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints.html)
