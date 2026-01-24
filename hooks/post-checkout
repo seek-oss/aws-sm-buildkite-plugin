@@ -16,5 +16,6 @@ while IFS='=' read -r name _ ; do
     path=$(strip_quotes "${!pathVar}")
     echo "Reading ${secretId} from AWS SM into file ${path}"
     get_secret_value "${secretId}" 'allow-binary' > "${path}"
+    register_file_with_redactor "${path}"
   fi
 done < <(env | sort)
