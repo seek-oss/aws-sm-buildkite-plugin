@@ -153,7 +153,7 @@ steps:
 
 ### Secret Redaction
 
-By default, this plugin automatically registers all loaded secrets with Buildkite's secret redactor to prevent accidental exposure in build logs. This ensures that if secrets are printed later in your build commands, they will be automatically redacted.
+By default, this plugin automatically registers all loaded secrets with [Buildkite's secret redactor](https://buildkite.com/docs/agent/v3/cli/reference/redactor) to prevent accidental exposure in build logs. This ensures that if secrets are printed later in your build commands, they will be automatically redacted.
 
 You can disable this behavior by setting `redact-secrets: false`:
 
