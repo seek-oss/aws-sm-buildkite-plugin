@@ -47,7 +47,7 @@ For secrets in the same AWS account as the agent, you can use the secret name ra
 steps:
   - commands: 'echo \$MY_SECRET'
     plugins:
-      - seek-oss/aws-sm#v2.3.3:
+      - seek-oss/aws-sm#v2.4.0:
           env:
             MY_SECRET: my-secret-id
             MY_OTHER_SECRET: my-other-secret-id
@@ -66,7 +66,7 @@ For Secrets in JSON (e.g. you're using AWS SMs key=value support), a `jq`-compat
 steps:
   - commands: 'echo \$MY_SECRET'
     plugins:
-      - seek-oss/aws-sm#v2.3.3:
+      - seek-oss/aws-sm#v2.4.0:
           env:
             MY_SECRET:
               secret-id: "my-secret-id"
@@ -80,7 +80,7 @@ steps:
 steps:
   - commands: 'echo \$MY_SECRET'
     plugins:
-      - seek-oss/aws-sm#v2.3.3:
+      - seek-oss/aws-sm#v2.4.0:
           json-to-env:
             - secret-id: "my-secret-id"
               json-key: ".Variables"
@@ -113,7 +113,7 @@ For secrets in another AWS account, use the secret ARN.
 steps:
   - commands: 'echo \$SECRET_FROM_OTHER_ACCOUNT'
     plugins:
-      - seek-oss/aws-sm#v2.3.3:
+      - seek-oss/aws-sm#v2.4.0:
           env:
             SECRET_FROM_OTHER_ACCOUNT: "arn:aws:secretsmanager:ap-southeast-2:1234567:secret:my-global-secret"
           file:
@@ -130,7 +130,7 @@ In this case, you can either use the ARN syntax to deduce the region from the se
 steps:
   - commands: 'echo \$SECRET_FROM_OTHER_REGION'
     plugins:
-      - seek-oss/aws-sm#v2.3.3:
+      - seek-oss/aws-sm#v2.4.0:
           region: us-east-1
           env:
             SECRET_FROM_OTHER_REGION: my-secret-id
@@ -145,7 +145,7 @@ for increased security.
 steps:
   - commands: 'echo \$MY_SECRET'
     plugins:
-      - seek-oss/aws-sm#v2.3.3:
+      - seek-oss/aws-sm#v2.4.0:
           endpoint-url: https://vpce-12345-abcd.secretsmanager.us-east-1.vpce.amazonaws.com
           env:
             MY_SECRET: my-secret-id
@@ -161,7 +161,7 @@ You can disable this behavior by setting `redact-secrets: false`:
 steps:
   - commands: 'echo \$MY_SECRET'
     plugins:
-      - seek-oss/aws-sm#v2.3.3:
+      - seek-oss/aws-sm#v2.4.0:
           redact-secrets: false
           env:
             MY_SECRET: my-secret-id
@@ -176,7 +176,7 @@ It's thus possible to use secrets from this plugin in another plugin:
 steps:
   - command: npm publish
     plugins:
-      - seek-oss/aws-sm#v2.3.3:
+      - seek-oss/aws-sm#v2.4.0:
           env:
             MY_TOKEN: npm-publish-token
       - seek-oss/private-npm#v1.1.1:
@@ -191,7 +191,7 @@ Note that if you're using the [Docker plugin](https://github.com/buildkite-plugi
 steps:
   - command: echo $$MY_SECRET
     plugins:
-      - seek-oss/aws-sm#v2.3.3:
+      - seek-oss/aws-sm#v2.4.0:
           env:
             MY_SECRET: the-secret-id
       - docker#v1.4.0:
