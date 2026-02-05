@@ -151,28 +151,6 @@ steps:
             MY_SECRET: my-secret-id
 ```
 
-<<<<<<< HEAD
-
-### Secret Redaction
-
-By default, this plugin automatically registers all loaded secrets with [Buildkite's secret redactor](https://buildkite.com/docs/agent/v3/cli/reference/redactor) to prevent accidental exposure in build logs. This ensures that if secrets are printed later in your build commands, they will be automatically redacted.
-
-You can disable this behavior by setting `redact-secrets: false`:
-
-```yml
-steps:
-  - commands: 'echo \$MY_SECRET'
-    plugins:
-      - seek-oss/aws-sm#v2.4.1:
-          redact-secrets: false
-          env:
-            MY_SECRET: my-secret-id
-```
-
-=======
-
-> > > > > > > parent of 3ce741c (Automatically redact secrets using buildkite-agent redactor add (#37))
-
 ### Using Secrets in Another Plugin
 
 Per the examples above, the preferred `plugin` YAML syntax is to use an array of plugins over the object-key syntax, as this ensures consistent ordering between plugins.
