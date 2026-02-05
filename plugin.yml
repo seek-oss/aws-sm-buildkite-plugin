@@ -16,6 +16,4 @@ configuration:
       type: array
     region:
       type: string
-    redact-secrets:
-      type: boolean
   required: []
