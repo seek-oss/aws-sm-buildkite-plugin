@@ -60,32 +60,3 @@ function get_secret_value() {
   # assume it's a string
   echo "${secrets}" | jq -r '.SecretString'
 }
-
-function is_redaction_enabled() {
-  [[ "${BUILDKITE_PLUGIN_AWS_SM_REDACT_SECRETS:-true}" == "true" ]]
-}
-
-function register_secret_with_redactor() {
-  local secret_value="$1"
-  local is_json="${2:-}"
-
-  if ! is_redaction_enabled || [[ -z "${secret_value}" ]]; then
-    return 0
-  fi
-
-  if [[ "${is_json}" == "true" ]]; then
-    echo "${secret_value}" | buildkite-agent redactor add --format json
-  else
-    echo "${secret_value}" | buildkite-agent redactor add
-  fi
-}
-
-function register_file_with_redactor() {
-  local file_path="$1"
-
-  if ! is_redaction_enabled || [[ ! -f "${file_path}" ]] || [[ ! -s "${file_path}" ]]; then
-    return 0
-  fi
-
-  buildkite-agent redactor add "${file_path}"
-}

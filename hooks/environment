@@ -17,12 +17,9 @@ load_secret_into_env() {
   echo "Reading ${secret_id} from AWS SM into environment variable ${export_name}"
   secret_value="$(get_secret_value "${secret_id}")"
   # parse JSON key if we have one
-  if [[ -n "${json_key}" ]]; then
-    register_secret_with_redactor "${secret_value}" "true"
+  if [[ -n "${json_key}" ]] ; then
     echo "Extracting JSON value at '${json_key}' from secret"
     secret_value="$(jq -r "${json_key}" <<< "${secret_value}")"
-  else
-    register_secret_with_redactor "${secret_value}" "false"
   fi
   export "${export_name}=${secret_value}"
 }
@@ -33,8 +30,6 @@ load_all_secrets_into_env() {
   local secret_value
   echo "Reading all environment variables from ${secret_id} in AWS SM"
   secret_value="$(get_secret_value "${secret_id}")"
-  # Register full JSON secret to protect all values
-  register_secret_with_redactor "${secret_value}" "true"
   local IFS=$'\n'
   # the variable is sanitised in jq to avoid problems with keys containing =
   # raw output isn't used here to avoid messing the secrets that contain spaces
